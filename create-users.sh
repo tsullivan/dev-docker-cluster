@@ -6,7 +6,7 @@ HOST='https://elastic:changeme@localhost:9200'
 CONTENT_TYPE='Content-Type: application/json'
 
 send_request () {
-  curl -X POST -H "${CONTENT_TYPE}" "${HOST}$1" -d "${2}" --cacert certs/ca/ca.crt
+  curl -k -X POST -H "${CONTENT_TYPE}" "${HOST}$1" -d "${2}"
   echo
 }
 
