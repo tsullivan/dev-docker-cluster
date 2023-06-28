@@ -69,7 +69,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
     volumes:
       - ./certs:/usr/share/elasticsearch/config/certs
-      - esdata01:/usr/share/elasticsearch/data
+      - data01:/usr/share/elasticsearch/data
     ports:
       - ${ES_PORT}:9200
     environment:
@@ -112,7 +112,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
     volumes:
       - ./certs:/usr/share/elasticsearch/config/certs
-      - esdata02:/usr/share/elasticsearch/data
+      - data02:/usr/share/elasticsearch/data
     environment:
       - node.name=es02
       - cluster.name=${CLUSTER_NAME}
@@ -147,7 +147,7 @@ services:
       retries: 120
 
 volumes:
-  esdata01:
+  data01:
     driver: local
-  esdata02:
+  data02:
     driver: local
