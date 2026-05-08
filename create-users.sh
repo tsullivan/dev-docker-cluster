@@ -1,8 +1,9 @@
 #!/bin/bash
 
-set -x 
+set -ex
 
-HOST='https://elastic:changeme@localhost:9200'
+source "$(dirname "$0")/.env"
+HOST="https://elastic:${ELASTIC_PASSWORD}@localhost:${ES_PORT}"
 CONTENT_TYPE='Content-Type: application/json'
 
 send_request () {
@@ -27,7 +28,7 @@ send_request /_security/role/dev_reporting_user '
 '
 
 send_request /_security/role/discover_read_only '
-{"metadata":{},"elasticsearch":{"cluster":[],"indices":[{"names":["kibana_sample_data_ecommerce"],"privileges":["read","view_index_metadata"],"allow_restricted_indices":false}],"run_as":[]},"kibana":[{"spaces":["*"],"base":["read"],"feature":{}}]}
+{"cluster":[],"indices":[{"names":["kibana_sample_data_ecommerce"],"privileges":["read","view_index_metadata"],"allow_restricted_indices":false}],"applications":[{"application":"kibana-.kibana","privileges":["space_read"],"resources":["*"]}],"metadata":{},"run_as":[]}
 '
 
 # useres
