@@ -1,0 +1,64 @@
+# Override file that adds a SAML "Mock IdP" realm to the cluster so a local Kibana
+# (run via `yarn start`) with `mockIdpPlugin` enabled can authenticate against it.
+#
+# Mirrors the realm config that `yarn es snapshot` applies for stateful Kibana dev
+# (see https://github.com/elastic/kibana/pull/263998). The IdP entity ID, attribute
+# names and SP/ACS URLs match `@kbn/mock-idp-utils` defaults — Kibana is assumed to
+# be reachable at http://localhost:5601/kbn (the fixed `MOCK_IDP_KIBANA_BASE_PATH`).
+#
+# Requires a `trial` license (SAML is not available on `basic`). Bring it up with:
+#   docker compose -f docker-compose.yml -f docker-compose.saml.yml up -d
+services:
+  es01:
+    volumes:
+      - ./certs:/usr/share/elasticsearch/config/certs
+      - ./saml/metadata.xml:/usr/share/elasticsearch/config/saml/metadata.xml:ro
+      - ./saml/roles.yml:/usr/share/elasticsearch/config/roles.yml:ro
+    environment:
+      - xpack.security.authc.token.enabled=true
+      - xpack.security.authc.realms.saml.cloud-saml-kibana.order=0
+      - xpack.security.authc.realms.saml.cloud-saml-kibana.idp.metadata.path=saml/metadata.xml
+      - xpack.security.authc.realms.saml.cloud-saml-kibana.idp.entity_id=urn:mock-idp
+      - xpack.security.authc.realms.saml.cloud-saml-kibana.sp.entity_id=http://localhost:5601/kbn
+      - xpack.security.authc.realms.saml.cloud-saml-kibana.sp.acs=http://localhost:5601/kbn/api/security/saml/callback
+      - xpack.security.authc.realms.saml.cloud-saml-kibana.sp.logout=http://localhost:5601/kbn/logout
+      - xpack.security.authc.realms.saml.cloud-saml-kibana.attributes.principal=http://saml.elastic-cloud.com/attributes/principal
+      - xpack.security.authc.realms.saml.cloud-saml-kibana.attributes.groups=http://saml.elastic-cloud.com/attributes/roles
+      - xpack.security.authc.realms.saml.cloud-saml-kibana.attributes.name=http://saml.elastic-cloud.com/attributes/name
+      - xpack.security.authc.realms.saml.cloud-saml-kibana.attributes.mail=http://saml.elastic-cloud.com/attributes/email
+
+  # One-shot init that creates the SAML role mapping `kbn-es` would otherwise create when starting
+  # ES via `yarn es snapshot`. Maps the SAML `groups` attribute to ES roles via a role template, so
+  # users authenticated by the `cloud-saml-kibana` realm get the roles their SAML assertion lists.
+  # Polls es01 directly instead of using `depends_on` to avoid restarting the already-exited
+  # `setup` container on subsequent `up` runs.
+  saml-setup:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
+    volumes:
+      - ./certs:/usr/share/elasticsearch/config/certs
+    user: "0"
+    restart: "no"
+    command: >
+      bash -c '
+        echo "Waiting for es01 and creating SAML role mapping mock-idp-mapping";
+        until curl -sS -o /dev/null -w "%{http_code}" -X PUT --cacert config/certs/ca/ca.crt -u elastic:${ELASTIC_PASSWORD} -H "Content-Type: application/json" https://es01:9200/_security/role_mapping/mock-idp-mapping -d "{\"enabled\":true,\"role_templates\":[{\"template\":\"{\\\"source\\\":\\\"{{#tojson}}groups{{/tojson}}\\\"}\",\"format\":\"json\"}],\"rules\":{\"all\":[{\"field\":{\"realm.name\":\"cloud-saml-kibana\"}}]}}" | grep -q "^200$$"; do sleep 5; done;
+        echo "SAML role mapping created.";
+      '
+
+  es02:
+    volumes:
+      - ./certs:/usr/share/elasticsearch/config/certs
+      - ./saml/metadata.xml:/usr/share/elasticsearch/config/saml/metadata.xml:ro
+      - ./saml/roles.yml:/usr/share/elasticsearch/config/roles.yml:ro
+    environment:
+      - xpack.security.authc.token.enabled=true
+      - xpack.security.authc.realms.saml.cloud-saml-kibana.order=0
+      - xpack.security.authc.realms.saml.cloud-saml-kibana.idp.metadata.path=saml/metadata.xml
+      - xpack.security.authc.realms.saml.cloud-saml-kibana.idp.entity_id=urn:mock-idp
+      - xpack.security.authc.realms.saml.cloud-saml-kibana.sp.entity_id=http://localhost:5601/kbn
+      - xpack.security.authc.realms.saml.cloud-saml-kibana.sp.acs=http://localhost:5601/kbn/api/security/saml/callback
+      - xpack.security.authc.realms.saml.cloud-saml-kibana.sp.logout=http://localhost:5601/kbn/logout
+      - xpack.security.authc.realms.saml.cloud-saml-kibana.attributes.principal=http://saml.elastic-cloud.com/attributes/principal
+      - xpack.security.authc.realms.saml.cloud-saml-kibana.attributes.groups=http://saml.elastic-cloud.com/attributes/roles
+      - xpack.security.authc.realms.saml.cloud-saml-kibana.attributes.name=http://saml.elastic-cloud.com/attributes/name
+      - xpack.security.authc.realms.saml.cloud-saml-kibana.attributes.mail=http://saml.elastic-cloud.com/attributes/email
