@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+    entityID="urn:mock-idp">
+    <md:IDPSSODescriptor WantAuthnRequestsSigned="false"
+      protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+      <md:KeyDescriptor use="signing">
+        <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+          <ds:X509Data>
+            <ds:X509Certificate>MIIEBTCCAu2gAwIBAgIVAKqEEFDGSEs427xhISo7Je1FMv9rMA0GCSqGSIb3DQEBCwUAMDQxMjAwBgNVBAMTKUVsYXN0aWMgQ2VydGlmaWNhdGUgVG9vbCBBdXRvZ2VuZXJhdGVkIENBMCAXDTI2MDIxODE3NTEwMFoYDzIwNzYwMjA2MTc1MTAwWjARMQ8wDQYDVQQDEwZraWJhbmEwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDnWglNV6V9dB8F27upvq8rUT5hbhNrucawkvOJrcH0FP2pvinqHCboWRxMPO8P13YdxJ/3oD0gLQZYVF9Jp3jduU9Xss5p/J0MeyhB8p/DPwGIH8mWeDTWgmVGJqkmi0+xwm4Me5h6W0OXjfuigS1pLRBM3LhfMSnYGuL5c5cVkFxSk/h7mjB+nPTMyqsa5sIc/pZdJ+yELxnPXM27HaTutvzKc9qmq7aLk+4z6aHx/stTJIwMaavhqEX62xCFhZZVxKLu8kc32X25lsym92E1eDviCeKcv9319TWe9CFHit40xOJHrLTirWDqrfVTXbIEFvus0UzM+qshEJt7iPQzAgMBAAGjggEtMIIBKTAdBgNVHQ4EFgQUOZVqGbUpsDWbzODy6rn0QlE5F10wHwYDVR0jBBgwFoAUMEwqwI5b0MYpNxwaHJ9Tw1Lp3p4wgdsGA1UdEQSB0zCB0IIEZXMwMYI8a2Ita2ItdWlhbS5wcm9qZWN0LWFiY2RlZjEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2LmtiLmxvY2FsggRlczAygl1FSURFTlQuYWJjZGVmMTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTYucHJvamVjdC5lbGFzdGljc2VhcmNoLnR5cGUub3JnMTIzNDU2Nzg5MC5vcmdhbml6YXRpb26CBGVzMDOCCWxvY2FsaG9zdIIUaG9zdC5kb2NrZXIuaW50ZXJuYWwwCQYDVR0TBAIwADANBgkqhkiG9w0BAQsFAAOCAQEABRwp6ooJzO/nzBO/J+GBV0+brtTgqSXg8hZ6+9BUCv2dNPV7U/ioTkZtY3mbK2cgq0B6Q2e/poiZtHW35Zuo87zYonSyQxqblML7C8lzFEM4qTAOzBANxzzbSciumz5p88x5ug/y+0VDB2BkyQ+24Pw2YxbuA7iHjOOmdcgScPfulAx4FImfp2AZ/DeRdArTZAyI2pTKkOxvNRtToiBII2DdmHe7oYcfXFG02Z9vwz/o4YO+cLTs8hMMrL9G1y56wsSWT+kh/j3QDzqMnNmQ+VeEjEvxET6TbHZqgRa4q2qkyS2ls+X8NHWZ5uNXYbfnZpDdZ7LyAvvNvkThWc87gw==</ds:X509Certificate>
+          </ds:X509Data>
+        </ds:KeyInfo>
+      </md:KeyDescriptor>
+      <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+        Location="http://localhost:5601/kbn/mock_idp/logout" />
+      <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+        Location="http://localhost:5601/kbn/mock_idp/login" />
+    </md:IDPSSODescriptor>
+  </md:EntityDescriptor>
+  
