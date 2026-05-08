@@ -1,8 +1,12 @@
+**NOT FOR PRODUCTION USE**
+
 # dev
+
+Partially based on https://www.elastic.co/docs/deploy-manage/deploy/self-managed/install-elasticsearch-docker-compose
 
 Local two-node Elasticsearch cluster for development, run with Docker Compose. Generates its own CA + node certificates on first start and seeds a few example roles and users via the Security API.
 
-There is no Kibana service in this compose file — the `kibana_system` password is configured so you can point a separately-run Kibana at this cluster.
+There is no Kibana service in this compose file — the `kibana_system` password is configured so you can run Kibana in dev mode and point it at this cluster.
 
 ## Layout
 
